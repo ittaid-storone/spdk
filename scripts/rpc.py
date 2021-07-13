@@ -432,6 +432,16 @@ if __name__ == "__main__":
     p.add_argument('name', help='aio bdev name')
     p.set_defaults(func=bdev_aio_delete)
 
+    def bdev_aio_resize(args):
+        rpc.bdev.bdev_aio_resize(args.client,
+                                 name=args.name,
+                                 new_size_in_blocks=int(args.new_size_in_blocks))
+
+    p = subparsers.add_parser('bdev_aio_resize', help='Resize an aio disk')
+    p.add_argument('name', help='aio bdev name')
+    p.add_argument('new_size_in_blocks', help='New size in blocks for this bdev')
+    p.set_defaults(func=bdev_aio_resize)
+
     def bdev_uring_create(args):
         print_json(rpc.bdev.bdev_uring_create(args.client,
                                               filename=args.filename,

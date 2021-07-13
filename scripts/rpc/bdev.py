@@ -393,6 +393,17 @@ def bdev_aio_delete(client, name):
     params = {'name': name}
     return client.call('bdev_aio_delete', params)
 
+def bdev_aio_resize(client, name, new_size_in_blocks):
+    """Resize aio bdev.
+
+    Args:
+        name: name of aio bdev to resize
+        new_size_in_blocks: new size in blocks after resize
+    """
+    params = {'name': name,
+              'new_size_in_blocks': new_size_in_blocks}
+    return client.call('bdev_aio_resize', params)
+
 
 def bdev_uring_create(client, filename, name, block_size=None):
     """Create a bdev with Linux io_uring backend.

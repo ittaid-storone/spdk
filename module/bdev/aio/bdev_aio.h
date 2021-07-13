@@ -43,4 +43,6 @@ int create_aio_bdev(const char *name, const char *filename, uint32_t block_size)
 
 void bdev_aio_delete(struct spdk_bdev *bdev, delete_aio_bdev_complete cb_fn, void *cb_arg);
 
+int bdev_aio_resize(struct spdk_bdev *bdev, uint64_t new_size_in_blocks);
+
 #endif /* SPDK_BDEV_AIO_H */

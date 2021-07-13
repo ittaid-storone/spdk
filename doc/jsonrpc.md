@@ -448,6 +448,7 @@ Example response:
     "bdev_virtio_blk_set_hotplug",
     "bdev_aio_delete",
     "bdev_aio_create",
+    "bdev_aio_resize",
     "bdev_split_delete",
     "bdev_split_create",
     "bdev_error_inject_error",
@@ -2750,6 +2751,48 @@ Example response:
   "result": true
 }
 ~~~
+
+## bdev_aio_resize {#rpc_bdev_aio_resize}
+
+Construct @ref bdev_config_aio.
+
+### Parameters
+
+Name                    | Optional | Type        | Description
+----------------------- | -------- | ----------- | -----------
+name                    | Required | string      | Bdev name to use
+new_size_in_blocks      | Required | number      | New size in blocks after resize
+
+### Result
+
+Name of bdev to resize.
+
+### Example
+
+Example request:
+
+~~~
+{
+  "params": {
+    "name": "Aio0",
+    "new_size_in_blocks: 2000000
+  },
+  "jsonrpc": "2.0",
+  "method": "bdev_aio_resize",
+  "id": 1
+}
+~~~
+
+Example response:
+
+~~~
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": "Aio0"
+}
+~~~
+
 
 ## bdev_nvme_set_options {#rpc_bdev_nvme_set_options}
 

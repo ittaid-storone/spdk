@@ -858,6 +858,17 @@ bdev_aio_delete(struct spdk_bdev *bdev, delete_aio_bdev_complete cb_fn, void *cb
 	spdk_bdev_unregister(bdev, aio_bdev_unregister_cb, ctx);
 }
 
+int bdev_aio_resize(struct spdk_bdev *bdev, uint64_t new_size_in_blocks)
+{
+	int rc = spdk_bdev_notify_blockcnt_change(bdev, new_size_in_blocks);
+	if (rc != 0) {
+		SPDK_ERRLOG("failed to notify block cnt change.\n");
+		return rc;
+	}
+
+	return 0;	
+}
+
 static int
 bdev_aio_initialize(void)
 {
