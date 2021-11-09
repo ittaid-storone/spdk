@@ -527,6 +527,7 @@ static int _bdev_aio_submit_request(struct spdk_io_channel *ch, struct spdk_bdev
 		return 0;
 
 	case SPDK_BDEV_IO_TYPE_UNMAP:
+	case SPDK_BDEV_IO_TYPE_WRITE_ZEROES:
 		bdev_aio_unmap(bdev_io);
 		return 0;
 
@@ -560,6 +561,7 @@ bdev_aio_io_type_supported(void *ctx, enum spdk_bdev_io_type io_type)
 	case SPDK_BDEV_IO_TYPE_FLUSH:
 	case SPDK_BDEV_IO_TYPE_RESET:
 	case SPDK_BDEV_IO_TYPE_UNMAP:
+	case SPDK_BDEV_IO_TYPE_WRITE_ZEROES:
 		return true;
 
 	default:
