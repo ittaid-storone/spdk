@@ -467,6 +467,19 @@ bdev_aio_reset(struct file_disk *fdisk, struct bdev_aio_task *aio_task)
 	bdev_aio_reset_retry_timer(fdisk);
 }
 
+#define BLKDISCARD	_IO(0x12,119)
+
+static void bdev_aio_unmap(struct spdk_bdev_io* bdev_io)
+{
+	int res, fd;
+	uint64_t range[2];
+	fd = ((struct file_disk*)bdev_io->bdev->ctxt)->fd;
+	range[0] = bdev_io->u.bdev.offset_blocks * bdev_io->bdev->blocklen;
+	range[1] = bdev_io->u.bdev.num_blocks * bdev_io->bdev->blocklen;
+	res = ioctl(fd, BLKDISCARD, &range);
+	spdk_bdev_io_complete(bdev_io, res == 0 ? SPDK_BDEV_IO_STATUS_SUCCESS : SPDK_BDEV_IO_STATUS_FAILED);
+}
+
 static void
 bdev_aio_get_buf_cb(struct spdk_io_channel *ch, struct spdk_bdev_io *bdev_io,
 		    bool success)
@@ -512,6 +525,11 @@ static int _bdev_aio_submit_request(struct spdk_io_channel *ch, struct spdk_bdev
 		spdk_bdev_io_get_buf(bdev_io, bdev_aio_get_buf_cb,
 				     bdev_io->u.bdev.num_blocks * bdev_io->bdev->blocklen);
 		return 0;
+
+	case SPDK_BDEV_IO_TYPE_UNMAP:
+		bdev_aio_unmap(bdev_io);
+		return 0;
+
 	case SPDK_BDEV_IO_TYPE_FLUSH:
 		bdev_aio_flush((struct file_disk *)bdev_io->bdev->ctxt,
 			       (struct bdev_aio_task *)bdev_io->driver_ctx);
@@ -541,6 +559,7 @@ bdev_aio_io_type_supported(void *ctx, enum spdk_bdev_io_type io_type)
 	case SPDK_BDEV_IO_TYPE_WRITE:
 	case SPDK_BDEV_IO_TYPE_FLUSH:
 	case SPDK_BDEV_IO_TYPE_RESET:
+	case SPDK_BDEV_IO_TYPE_UNMAP:
 		return true;
 
 	default:
